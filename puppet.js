@@ -43,7 +43,6 @@ puppeteer.launch().then(async browser => {
 
     // Submit button
     await page.waitFor('input[type=Submit]')
-    promise = page.waitForResponse('https://saprd.my.uh.edu/psp/saprd/UHM_SITE/SA/c/NUI_FRAMEWORK.PT_LANDINGPAGE.GBL')
 
     // Wait for login form to submit
     const [response] = await Promise.all([

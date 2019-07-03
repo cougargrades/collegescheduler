@@ -12,6 +12,7 @@
     "dotenv": "^8.0.0",
     "fetch-cookie": "^0.7.2",
     "node-fetch": "^2.6.0",
-    "puppeteer": "^1.18.1"
+    "puppeteer": "^1.18.1",
+    "tough-cookie": "^3.0.1"
   }
 }

@@ -1,4 +1,10 @@
-const puppeteer = require('puppeteer');
+require('dotenv').config()
+const puppeteer = require('puppeteer')
+const tough = require('tough-cookie')
+const cookieutil = require('./cookie')
+
+const nodeFetch = require('node-fetch');
+
 
 puppeteer.launch().then(async browser => {
     console.log('[💬] Login https://my.uh.edu ...')
@@ -63,12 +69,26 @@ puppeteer.launch().then(async browser => {
     // Wait for the page to load
     await scheduler.waitFor('#Term-options')
 
-    console.log('[📝] Saving cookies https://uh.collegescheduler.com ...')
+    console.log('[📝] Extracting cookies https://uh.collegescheduler.com ...')
 
     // Extract the cookies
     let pupcookies = await scheduler.cookies('https://uh.collegescheduler.com');
+    let cookiejar = new tough.CookieJar();
+    for(let i = 0; i < pupcookies.length; i++)
+        cookiejar.setCookieSync(cookieutil.puppeteerToTough(pupcookies[i]), `${pupcookies[i].secure ? 'https://' : 'http://'}${pupcookies[i].domain}${pupcookies[i].path}`);
     
-    //TODO: save to cookiejar
+    const fetch = require('fetch-cookie/node-fetch')(nodeFetch, cookiejar)
 
-    await browser.close();
+    let res = await fetch('https://uh.collegescheduler.com/api/terms/')
+    console.log(res.status !== 200 ? `[⚠] Faulty HTTP code: ${res.status}` : '[✅] API access confirmed')
+    
+    if(res.status !== 200) {
+        console.log('closing because faulty http code')
+        await browser.close()
+    }
+
+    console.log(cookiejar)
+
+    await Promise.all((await browser.pages()).map(e => e.close()))
+    await browser.close()
 });

@@ -1,10 +1,26 @@
+#!/usr/bin/env node
+const argv = require('yargs')
+    .option('outfile', {
+        alias: 'o',
+        default: 'cookiejar.json'
+    })
+    .describe('outfile', 'File where JSON CookieJar will be saved to')
+    .argv
+
 require('dotenv').config()
+const fs = require('fs')
 const puppeteer = require('puppeteer')
 const tough = require('tough-cookie')
 const cookieutil = require('./cookie')
 
-const nodeFetch = require('node-fetch');
+const nodeFetch = require('node-fetch')
 
+if(!process.env.MY_UH_PEOPLESOFT_ID)
+    console.log('[⛔] Must define MY_UH_PEOPLESOFT_ID in environment or .env file')
+if(!process.env.MY_UH_PASSWORD)
+    console.log('[⛔] Must define MY_UH_PASSWORD in environment or .env file')
+if(!process.env.MY_UH_PEOPLESOFT_ID || !process.env.MY_UH_PASSWORD)
+    process.exit(1)
 
 puppeteer.launch().then(async browser => {
     console.log('[💬] Login https://my.uh.edu ...')
@@ -87,8 +103,14 @@ puppeteer.launch().then(async browser => {
         await browser.close()
     }
 
-    console.log(cookiejar)
+    try {
+        // This times out for no fucking reason
+        await browser.close()
+    }
+    catch(err) {
+        //
+    }
 
-    await Promise.all((await browser.pages()).map(e => e.close()))
-    await browser.close()
+    fs.writeFileSync(argv.outfile, cookiejar.serializeSync())
+    console.log(`[🍪] CookieJar written to ${argv.outfile}`)
 });

@@ -150,7 +150,7 @@ module.exports.extract  = async function (psid, password, options) {
 
     await browser.close()
     // returns JSON or cookiestring depending on option
-    return options.format !== 'set-cookie' ? cookiejar.serializeSync() : cookiejar.getCookieStringSync('https://uh.collegescheduler.com')
+    return options.format !== 'set-cookie' ? JSON.stringify(cookiejar.serializeSync(), null, 1) : cookiejar.getCookieStringSync('https://uh.collegescheduler.com')
 }
 
 

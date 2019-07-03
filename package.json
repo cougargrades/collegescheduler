@@ -8,7 +8,7 @@
     "puppet": "./src/puppet.js"
   },
   "bin": {
-    "puppet": "./src/puppet.js"
+    "uhcs_puppet": "./src/puppet.js"
   },
   "author": "",
   "license": "ISC",

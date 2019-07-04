@@ -3,7 +3,7 @@ require('dotenv').config()
 const fs = require('fs')
 const puppeteer = require('puppeteer')
 const tough = require('tough-cookie')
-const cookieutil = require('./cookie')
+const cookieutil = require('./cookie.js')
 
 const nodeFetch = require('node-fetch')
 
@@ -57,7 +57,7 @@ module.exports.cli = async function () {
  * @async
  * @param {string} psid - UH PeopleSoft ID number
  * @param {string} password - UH password
- * @param {object} options - Miscellaneous options
+ * @param {object} options - { logging: [true|false], format: ['set-cookie'|'jar']}
  * @returns {Promise<tough.CookieJar>}
  * @throws {Exception} - TODO: more descriptive error names
  */

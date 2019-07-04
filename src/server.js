@@ -6,36 +6,7 @@ const NAME = require('../package.json').name
 const Puppet = require('./puppet.js')
 const interval = require('interval-promise')
 const fetch = require('node-fetch')
-
-// const proxy = async (req, res, next) => {
-//     console.log('API:', req.originalUrl)
-//     let settings = { // passthrough settings
-//     method: req.method,
-//     body: req.body,
-//     headers: {
-//         cookie: req.headers.cookie
-//     },
-//     credentials: 'include'
-//     }
-//     try {
-//     let response = await fetch(process.env.REVERSE_PROXY_URL + req.originalUrl.split('/api')[1], settings)
-//     if (!response.ok) {
-//         throw new Error('Bad response from server:', response.message)
-//     }
-//     let data = await response.json()
-//     res.send(data)
-//     } catch (err) {
-//     console.log(err.message)
-//     res.status(500).send(err.message)
-//     }
-// }
-
-// app.use('/api/*', proxy)
-// app.get('/meta', (req, res) => res.json(`Hello, ${NAME}!`))
-
-// let cookie = await 
-
-// app.listen(process.env.PROXY_SERVER_PORT, (a,b) => console.log(`Example app listening on port ${process.env.PROXY_SERVER_PORT}!`))
+const path = require('path')
 
 const hoursToMs = (h) => h * 60 * 60 * 1000
 const stamp = () => `[${new Date().toLocaleTimeString("en-US", {year: "numeric", month: "short", day: "2-digit"})}]`
@@ -45,19 +16,20 @@ const HOST = 'https://uh.collegescheduler.com'
 class ProxyServer {
     /**
      * 
-     * @param {string} psid - MyUH PeopleSoft ID
-     * @param {string} password - MyUH password
+     * @param {options} params - { port: <number>, psid: <string>, password: <string>, logging: <number> }
      */
-    constructor(psid, password) {
-        this.APP_NAME = require('../package.json').name
+    constructor(params) {
+        this.name = 'uhcollegescheduler-proxy'
+        this.port = params.port
         // Init credentials
-        this.psid = psid.slice()
-        this.password = password.slice()
+        this.psid = params.psid.slice()
+        this.password = params.password.slice()
+        this.logging = params.logging
         this.cookie = null
         this.fetchOpt = {
             redirect: 'manual',
             headers: {
-                Cookie: this.cookie
+                cookie: this.cookie
             }
         };
         this.timerEnable = true
@@ -74,18 +46,18 @@ class ProxyServer {
         if(this.timerFirstRun === false) return
         if(this.timerFirstRun) this.timerFirstRun = false
 
-        console.log(`${stamp()} ProxyServer#refresh() -> START`)
+        if(this.logging > 1) console.log(`${stamp()} ProxyServer#refresh() -> START`)
 
         try {
             let start = process.hrtime()
             this.cookie = (await Puppet.extract(this.psid, this.password, { logging: false, format: 'set-cookie' })).slice()
             this.fetchOpt = {
                 headers: {
-                    Cookie: this.cookie
+                    cookie: this.cookie
                 }
             };
             let end = process.hrtime(start)
-            console.log(`${stamp()} ProxyServer#refresh() -> END (${end[0]}s ${end[1] / 1000000}ms)`)
+            if(this.logging > 1) console.log(`${stamp()} ProxyServer#refresh() -> END (${end[0]}s ${end[1] / 1000000}ms)`)
         }
         catch(err) {
             console.log(`${stamp()} [⚠] ProxyServer#refresh() failed to refresh:\n`,err)
@@ -93,7 +65,7 @@ class ProxyServer {
 
         // For first-time init
         if(this.timerFirstRun === false) {
-            console.log(`${stamp()} ProxyServer#refresh() -> END First Refresh`)
+            if(this.logging > 1) console.log(`${stamp()} ProxyServer#refresh() -> END First Refresh`)
             delete this.timerFirstRun
         }
     }
@@ -101,17 +73,50 @@ class ProxyServer {
         // For first-time init
         if(this.timerFirstRun === false) return
 
-        console.log(`${stamp()} ProxyServer#keepalive() -> START (depth: ${depth})`)
         depth = depth ? depth : 0
+        if(this.logging > 1) console.log(`${stamp()} ProxyServer#keepalive() -> START (depth: ${depth})`)
         let res = await fetch(`${HOST}/api/terms/`, this.fetchOpt)
 
         // If response doesn't go through, try at most 3 times again
         if(res.status !== 200 && depth < 3) {
+            this.cookie = null // send HTTP/511 back to any requests while cookies are refreshed
             await this.refresh()
             await this.keepalive()
         }
 
-        console.log(`${stamp()} ProxyServer#keepalive() -> END (depth: ${depth})`)
+        if(this.logging > 1) console.log(`${stamp()} ProxyServer#keepalive() -> END (depth: ${depth})`)
+    }
+    listen() {
+        const proxy = async (req, res, next) => {
+            if(!this.cookie) {
+                res.status(511).json({ status: 511, msg: 'Network Authentication Required' })
+                return
+            }
+            if(this.logging > 0) console.log(`${stamp()} API -> ${req.method} ${req.originalUrl}`)
+            let settings = { // passthrough settings
+                method: req.method,
+                body: req.body,
+                headers: {
+                    cookie: this.cookie
+                }
+            }
+            try {
+                let response = await fetch(`${HOST}/${req.originalUrl}`, settings)
+                if (!response.ok) {
+                    throw new Error('Bad response from server:', response.message)
+                }
+                let data = await response.json()
+                res.send(data)
+            } catch (err) {
+                console.log(err.message)
+                res.status(502).send(err.message)
+            }
+        }
+        
+        app.use('/api/*', proxy)
+        app.get('/meta', (req, res) => res.json(`Hello, ${this.name}!`))
+        
+        app.listen(this.port, () => console.log(`${stamp()} ProxyServer listening on port ${this.port}!`))
     }
     
 };
@@ -124,11 +129,17 @@ module.exports.cli = async function() {
     if(!process.env.MY_UH_PEOPLESOFT_ID || !process.env.MY_UH_PASSWORD)
         process.exit(1)
     
-    let server = new ProxyServer(process.env.MY_UH_PEOPLESOFT_ID, process.env.MY_UH_PASSWORD)
+    let server = new ProxyServer({
+        port: process.env.PROXY_SERVER_PORT,
+        psid: process.env.MY_UH_PEOPLESOFT_ID,
+        password: process.env.MY_UH_PASSWORD,
+        logging: 1
+    })
+    server.listen()
 }
 
 if (require.main === module) {
     module.exports.cli()
 }
 
-module.exports = ProxyServer;
+module.exports.ProxyServer = ProxyServer;

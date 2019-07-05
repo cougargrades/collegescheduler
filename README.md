@@ -24,7 +24,7 @@ This project is not on Docker Hub. To build from Github directly, follow these i
     MY_UH_PASSWORD=hunter2
     PROXY_SERVER_PORT=3003
     ```
-- Go to the [Releases tab](https://github.com/au5ton/uhcollegescheduler-proxy/releases), pick the latest release, and replace the occurrences of `<TAG>` in the command below with the tag of the latest release (Ex: _v1.0_):
+- Go to the [Releases tab](https://github.com/au5ton/uhcollegescheduler-proxy/releases), pick the latest release, and replace the occurrences of `<TAG>` in the command below with the tag of the latest release (Ex: _v1.1_):
 
     `docker build github.com/au5ton/uhcollegescheduler-proxy#<TAG> -t uhcollegescheduler-proxy:<TAG>`
 - Start a new container: 

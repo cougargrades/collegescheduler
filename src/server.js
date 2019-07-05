@@ -123,7 +123,7 @@ class ProxyServer {
                 res.send(data)
             } catch (err) {
                 console.log(err.message)
-                res.status(502).send(err.message)
+                res.status(502).send({ status: 502, msg: err.message })
             }
         }
         

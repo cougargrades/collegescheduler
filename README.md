@@ -39,6 +39,15 @@ This project is not on Docker Hub. To build from Github directly, follow these i
 - Specify desired port in `.env` or with variable `PROXY_SERVER_PORT`.
 - Run server: `npm run server`
 
+#### HTTP Responses
+All HTTP responses that the proxy server makes are identical to those made to `https://uh.collegescheduler.com/`. However, there are some exceptions:
+- _HTTP/511 Network Authentication Required_: 
+
+    This means that you happened to catch the proxy server while it is in the middle of refreshing its cookie automatically. The refresh process takes about 10-13 seconds on a fast connection. After that period, your request will be serviceable while the backend is active on a new "session".
+- _HTTP/502 _ Bad Gateway:
+
+    This means that there was a back-end error proxying this request. The error message is included. 
+
 ## Puppet.js
 puppet.js uses [`puppeteer`](https://github.com/GoogleChrome/puppeteer/) to crawl my.uh.edu, portal to collegescheduler.com, and extract the cookies for use.
 

@@ -101,6 +101,8 @@ class ProxyServer {
     listen() {
         const proxy = async (req, res, next) => {
             if(!this.cookie) {
+                // Safer to reply with 511 than hang require for 10-13 seconds while the cookie is refreshed
+                // Cookies are refreshed automatically when the keepalive fails, so (ideally) someone shouldn't be met with this anyway
                 res.status(511).json({ status: 511, msg: 'Network Authentication Required' })
                 return
             }
@@ -128,14 +130,14 @@ class ProxyServer {
         app.use('/api/*', proxy)
         app.get('/meta', (req, res) => res.json(`Hello, ${this.name}!`))
         
+        
         interval((async (iteration, stop) => {
-            console.log(`${stamp()} Waiting for first-run cookie ...`)
-            console.log(this.cookie)
-            console.log(iteration)
+            console.log(`${stamp()} Waiting for first-run cookie ... ${iteration > 1 ? `[${iteration} / 10]` : ''}`)
             // Retry to listen for 10 attempts on server startup before giving up
             if(this.cookie === null && iteration < 10) return 
-            
-            console.log('listening')
+            if(iteration >= 10) {
+                console.log(`${stamp()} First-run refresh took too long (10 checks over 50 seconds). Perhaps something is hung?`)
+            }
             // Actually start the server
             app.listen(this.port, () => console.log(`${stamp()} ProxyServer listening on port ${this.port}!`))
             // Don't start the server again if conditions are met
@@ -162,6 +164,8 @@ module.exports.cli = async function() {
         logging: 3
     })
     server.listen()
+
+    console.log('👋 Running server.js')
 }
 
 if (require.main === module) {

@@ -4,6 +4,8 @@ uhcollegescheduler-proxy
 
 <hr>
 
+![screenshot](img/screenshot.png)
+
 ## Webserver
 
 Proxies unauthenticated requests to the local webserver to `https://uh.collegescheduler.com/` with your cookie attached.

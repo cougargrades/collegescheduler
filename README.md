@@ -4,9 +4,7 @@ uhcollegescheduler-proxy
 
 <hr>
 
-## Modules
-
-### Webserver
+## Webserver
 
 Proxies unauthenticated requests to the local webserver to `https://uh.collegescheduler.com/` with your cookie attached.
 
@@ -14,16 +12,7 @@ The webserver will automatically refresh the cookie with Puppet.js when the curr
 
 _Note: Do not leave the local server exposed to the open internet because every unauthenticated client acts on your behalf._
 
-### Puppet.js
-puppet.js uses [`puppeteer`](https://github.com/GoogleChrome/puppeteer/) to crawl my.uh.edu, portal to collegescheduler.com, and extract the cookies for use.
-
-<hr>
-
-## Usage
-
-_Note: Some environments will require [troubleshooting with puppeteer](https://github.com/GoogleChrome/puppeteer/blob/master/docs/troubleshooting.md)._
-
-### Webserver
+### Usage
 
 #### Run inside Docker
 How you supply environment variables to the Docker image depends on your workflow, but my preferential way is:
@@ -46,9 +35,12 @@ How you supply environment variables to the Docker image depends on your workflo
 - Specify desired port in `.env` or with variable `PROXY_SERVER_PORT`.
 - Run server: `npm run server`
 
-<hr>
+## Puppet.js
+puppet.js uses [`puppeteer`](https://github.com/GoogleChrome/puppeteer/) to crawl my.uh.edu, portal to collegescheduler.com, and extract the cookies for use.
 
-### Puppet.js
+### Usage
+
+_Note: Some environments will require [troubleshooting with puppeteer](https://github.com/GoogleChrome/puppeteer/blob/master/docs/troubleshooting.md)._
 
 #### Command-line tool
 - With npm:
@@ -113,6 +105,8 @@ How you supply environment variables to the Docker image depends on your workflo
 
     console.log(cookie) // '__RequestVerificationToken=abcdef; AspNet.Cookies=uvwxyz'
     ```
+
+
 
 <hr>
 

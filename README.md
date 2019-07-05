@@ -30,11 +30,15 @@ How you supply environment variables to the Docker image depends on your workflo
 
 - Create an `.env` file that is a copy of [`.env.example`](.env.example) with your own information.
 
-https://github.com/au5ton/uhcollegescheduler-proxy/blob/1bad1e9fc612d5a92f76db8d8f10d3aea12710ed/.env.example#L1-L3
+    ```
+    MY_UH_PEOPLESOFT_ID=1234567
+    MY_UH_PASSWORD=hunter2
+    PROXY_SERVER_PORT=3003
+    ```
 
 - Start a new container: 
 
-`docker run -i --env-file .env -p 3003:3003 github.com/au5ton/uhcollegescheduler-proxy`
+    `docker run -i --env-file .env -p 3003:3003 github.com/au5ton/uhcollegescheduler-proxy`
 
 #### Standalone
 - _Prerequisite: Make sure Puppet.js functions as intended and has no errors before starting the proxy server. See guide below._
@@ -63,52 +67,52 @@ https://github.com/au5ton/uhcollegescheduler-proxy/blob/1bad1e9fc612d5a92f76db8d
     - `$ MY_UH_PASSWORD=hunter2`
 - Follow instructions on running in the `--help` page.
 
-```
-$ ./src/puppet.js -o cookiejar.json
+    ```
+    $ ./src/puppet.js -o cookiejar.json
 
-[💬] Login https://my.uh.edu ...
-[✅] Logged in!
-[💬] Portalling (Student Center -> Schedule Planner) ...
-[📝] Extracting cookies https://uh.collegescheduler.com ...
-[✅] API access confirmed
-[🍪] CookieJar written to cookiejar.json
+    [💬] Login https://my.uh.edu ...
+    [✅] Logged in!
+    [💬] Portalling (Student Center -> Schedule Planner) ...
+    [📝] Extracting cookies https://uh.collegescheduler.com ...
+    [✅] API access confirmed
+    [🍪] CookieJar written to cookiejar.json
 
-$ cat cookiejar.json
-{
- "version": "tough-cookie@3.0.1",
- ...
- "cookies": [
-  {
-   "key": "__RequestVerificationToken",
-   "value": "...",
+    $ cat cookiejar.json
+    {
+    "version": "tough-cookie@3.0.1",
     ...
-  },
-  {
-   "key": ".AspNet.Cookies",
-   "value": "...",
-   ...
-  }
- ]
-}
-```
+    "cookies": [
+    {
+    "key": "__RequestVerificationToken",
+    "value": "...",
+        ...
+    },
+    {
+    "key": ".AspNet.Cookies",
+    "value": "...",
+    ...
+    }
+    ]
+    }
+    ```
 
 #### Node module
 - Developed with Node 10. Must support ES7 `async/await` and maybe other features.
 - Install dependency: `npm install au5ton/uhcollegescheduler-proxy`
 - Sample code:
 
-```javascript
-const { Puppet } = require('uhcollegescheduler-proxy')
+    ```javascript
+    const { Puppet } = require('uhcollegescheduler-proxy')
 
-let options = {
-    logging: true, // [true | false]
-    format: 'set-cookie' // ['jar' | 'set-cookie']
-}
+    let options = {
+        logging: true, // [true | false]
+        format: 'set-cookie' // ['jar' | 'set-cookie']
+    }
 
-let cookie = await Puppet.extract('177554', 'secretpassword', options)
+    let cookie = await Puppet.extract('177554', 'secretpassword', options)
 
-console.log(cookie) // '__RequestVerificationToken=abcdef; AspNet.Cookies=uvwxyz'
-```
+    console.log(cookie) // '__RequestVerificationToken=abcdef; AspNet.Cookies=uvwxyz'
+    ```
 
 <hr>
 

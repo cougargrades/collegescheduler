@@ -38,6 +38,10 @@ class ProxyServer {
         this.refresh()
         interval(this.keepalive.bind(this), 5 * 1000) // Keep-alive interval of 45 seconds 
     }
+    /**
+     * @param {iteration} - (Not used) interval-promise iteration number
+     * @param {stop} - interval-promise function that stops the timer
+     */
     async refresh(iteration, stop) {
         if(this.timerKill) stop()
         if(!this.timerEnable) return
@@ -50,7 +54,7 @@ class ProxyServer {
 
         try {
             let start = process.hrtime()
-            this.cookie = (await Puppet.extract(this.psid, this.password, { logging: false, format: 'set-cookie' })).slice()
+            this.cookie = (await Puppet.extract(this.psid, this.password, { logging: (this.logging > 2 ? true : false), format: 'set-cookie' })).slice()
             this.fetchOpt = {
                 headers: {
                     cookie: this.cookie
@@ -69,6 +73,11 @@ class ProxyServer {
             delete this.timerFirstRun
         }
     }
+    /**
+     * @param {iteration} - (Not used) interval-promise iteration number
+     * @param {stop} - interval-promise function that stops the timer
+     * @param {depth} - retry count used when keepalive() fails and recursively calls
+     */
     async keepalive(iteration, stop, depth) {
         // For first-time init
         if(this.timerFirstRun === false) return
@@ -86,6 +95,9 @@ class ProxyServer {
 
         if(this.logging > 1) console.log(`${stamp()} ProxyServer#keepalive() -> END (depth: ${depth})`)
     }
+    /**
+     * Start the HTTP server
+     */
     listen() {
         const proxy = async (req, res, next) => {
             if(!this.cookie) {
@@ -116,7 +128,21 @@ class ProxyServer {
         app.use('/api/*', proxy)
         app.get('/meta', (req, res) => res.json(`Hello, ${this.name}!`))
         
-        app.listen(this.port, () => console.log(`${stamp()} ProxyServer listening on port ${this.port}!`))
+        interval((async (iteration, stop) => {
+            console.log(`${stamp()} Waiting for first-run cookie ...`)
+            console.log(this.cookie)
+            console.log(iteration)
+            // Retry to listen for 10 attempts on server startup before giving up
+            if(this.cookie === null && iteration < 10) return 
+            
+            console.log('listening')
+            // Actually start the server
+            app.listen(this.port, () => console.log(`${stamp()} ProxyServer listening on port ${this.port}!`))
+            // Don't start the server again if conditions are met
+            stop()
+        }).bind(this), 5 * 1000)
+
+        
     }
     
 };
@@ -133,7 +159,7 @@ module.exports.cli = async function() {
         port: process.env.PROXY_SERVER_PORT,
         psid: process.env.MY_UH_PEOPLESOFT_ID,
         password: process.env.MY_UH_PASSWORD,
-        logging: 1
+        logging: 3
     })
     server.listen()
 }

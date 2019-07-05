@@ -15,7 +15,7 @@ _Note: Do not leave the local server exposed to the open internet because every 
 ### Usage
 
 #### Run inside Docker
-How you supply environment variables to the Docker image depends on your workflow, but my preferential way is:
+This project is not on Docker Hub. To build from Github directly, follow these instructions.
 
 - Create an `.env` file that is a copy of [`.env.example`](.env.example) with your own information.
 
@@ -24,10 +24,12 @@ How you supply environment variables to the Docker image depends on your workflo
     MY_UH_PASSWORD=hunter2
     PROXY_SERVER_PORT=3003
     ```
+- Go to the [Releases tab](https://github.com/au5ton/uhcollegescheduler-proxy/releases), pick the latest release, and replace the occurrences of `<TAG>` in the command below with the tag of the latest release (Ex: _v1.0_):
 
+    `docker build github.com/au5ton/uhcollegescheduler-proxy#<TAG> -t uhcollegescheduler-proxy:<TAG>`
 - Start a new container: 
 
-    `docker run -i --env-file .env -p 3003:3003 github.com/au5ton/uhcollegescheduler-proxy`
+    `docker run -i --env-file .env -p 3003:3003 uhcollegescheduler-proxy`
 
 #### Run as standalone
 - _Prerequisite: Make sure Puppet.js functions as intended and has no errors before starting the proxy server. See guide below._

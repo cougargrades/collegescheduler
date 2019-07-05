@@ -40,7 +40,7 @@ How you supply environment variables to the Docker image depends on your workflo
 
     `docker run -i --env-file .env -p 3003:3003 github.com/au5ton/uhcollegescheduler-proxy`
 
-#### Standalone
+#### Run as standalone
 - _Prerequisite: Make sure Puppet.js functions as intended and has no errors before starting the proxy server. See guide below._
 - Install dependencies: `npm install`
 - Specify desired port in `.env` or with variable `PROXY_SERVER_PORT`.

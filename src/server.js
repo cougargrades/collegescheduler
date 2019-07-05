@@ -36,7 +36,7 @@ class ProxyServer {
         this.timerKill = false
         this.timerFirstRun = true
         this.refresh()
-        interval(this.keepalive.bind(this), 5 * 1000) // Keep-alive interval of 45 seconds 
+        interval(this.keepalive.bind(this), 45 * 1000) // Keep-alive interval of 45 seconds 
     }
     /**
      * @param {iteration} - (Not used) interval-promise iteration number
@@ -161,7 +161,7 @@ module.exports.cli = async function() {
         port: process.env.PROXY_SERVER_PORT ? process.env.PROXY_SERVER_PORT : 3003,
         psid: process.env.MY_UH_PEOPLESOFT_ID,
         password: process.env.MY_UH_PASSWORD,
-        logging: 3
+        logging: 3 // Logging level [0,3]
     })
     server.listen()
 

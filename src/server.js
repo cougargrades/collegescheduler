@@ -158,7 +158,7 @@ module.exports.cli = async function() {
         process.exit(1)
     
     let server = new ProxyServer({
-        port: process.env.PROXY_SERVER_PORT,
+        port: process.env.PROXY_SERVER_PORT ? process.env.PROXY_SERVER_PORT : 3003,
         psid: process.env.MY_UH_PEOPLESOFT_ID,
         password: process.env.MY_UH_PASSWORD,
         logging: 3

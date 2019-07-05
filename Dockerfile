@@ -15,5 +15,6 @@ RUN apt-get update \
 WORKDIR /app
 COPY . .
 RUN npm install
+# default port
 EXPOSE 3003
 CMD ["npm","run","server"]

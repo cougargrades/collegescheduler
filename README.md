@@ -4,7 +4,9 @@ uhcollegescheduler-proxy
 
 <hr>
 
-## Webserver
+## Modules
+
+### Webserver
 
 Proxies unauthenticated requests to the local webserver to `https://uh.collegescheduler.com/` with your cookie attached.
 
@@ -12,10 +14,10 @@ The webserver will automatically refresh the cookie with Puppet.js when the curr
 
 _Note: Do not leave the local server exposed to the open internet because every unauthenticated client acts on your behalf._
 
-## Puppet.js
+### Puppet.js
 puppet.js uses [`puppeteer`](https://github.com/GoogleChrome/puppeteer/) to crawl my.uh.edu, portal to collegescheduler.com, and extract the cookies for use.
 
-
+<hr>
 
 ## Usage
 
@@ -23,12 +25,24 @@ _Note: Some environments will require [troubleshooting with puppeteer](https://g
 
 ### Webserver
 
-```
-TODO: write webserver
+#### Run inside Docker
+How you supply environment variables to the Docker image depends on your workflow, but my preferential way is:
 
-    `/` ===> `https://uh.collegescheduler.com/`
+- Create an `.env` file that is a copy of [`.env.example`](.env.example) with your own information.
 
-```
+https://github.com/au5ton/uhcollegescheduler-proxy/blob/1bad1e9fc612d5a92f76db8d8f10d3aea12710ed/.env.example#L1-L3
+
+- Start a new container: 
+
+`docker run -i --env-file .env -p 3003:3003 github.com/au5ton/uhcollegescheduler-proxy`
+
+#### Standalone
+- _Prerequisite: Make sure Puppet.js functions as intended and has no errors before starting the proxy server. See guide below._
+- Install dependencies: `npm install`
+- Specify desired port in `.env` or with variable `PROXY_SERVER_PORT`.
+- Run server: `npm run server`
+
+<hr>
 
 ### Puppet.js
 

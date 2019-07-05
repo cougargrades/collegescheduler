@@ -44,7 +44,7 @@ All HTTP responses that the proxy server makes are identical to those made to `h
 - _HTTP/511 Network Authentication Required_: 
 
     This means that you happened to catch the proxy server while it is in the middle of refreshing its cookie automatically. The refresh process takes about 10-13 seconds on a fast connection. After that period, your request will be serviceable while the backend is active on a new "session".
-- _HTTP/502 _ Bad Gateway:
+- _HTTP/502 Bad Gateway_:
 
     This means that there was a back-end error proxying this request. The error message is included. 
 

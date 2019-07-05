@@ -4,6 +4,7 @@ const fs = require('fs')
 const puppeteer = require('puppeteer')
 const tough = require('tough-cookie')
 const cookieutil = require('./cookie.js')
+const isDocker = require('is-docker')
 
 const nodeFetch = require('node-fetch')
 
@@ -66,8 +67,10 @@ module.exports.extract  = async function (psid, password, options) {
     options.format = options.format !== 'set-cookie' ? 'jar' : 'set-cookie';
 
     // Puppeteer setup
-    const browser = await puppeteer.launch()
+    const browser = await puppeteer.launch({ args: isDocker() ? ['--no-sandbox', '--disable-setuid-sandbox'] : [] })
     const page = await browser.newPage();
+
+    if(options.logging) console.log('[🐋] Detected to be running inside Docker. Chrome sandbox disabled.')
 
     if(options.logging) console.log('[💬] Login https://my.uh.edu ...')
     await page.goto('https://my.uh.edu');

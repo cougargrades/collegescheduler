@@ -2,6 +2,10 @@ uhcollegescheduler-proxy
 ========================
 📅📡 Local reverse-proxy to UH CollegeScheduler API that can be re-authenticated automatically to consistently access up-to-date course schedules and catalog data.
 
+`https://uh.collegescheduler.com/` has a useful API for retrieving information about courses, however, it is only accessible during an active session made by digging through the MyUH portal. This project makes this API more accessible by sending background keepalive requests to make sessions last longer and refreshing login sessions behind the scenes to make the API more convenient to access for other applications.
+
+It can even be run entirely in Docker.
+
 <hr>
 
 ![screenshot](img/screenshot.png)

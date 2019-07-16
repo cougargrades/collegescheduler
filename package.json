@@ -1,5 +1,5 @@
 {
-  "name": "uhcollegescheduler-proxy",
+  "name": "@cougargrades/collegescheduler",
   "version": "1.0.0",
   "description": "Local reverse-proxy to UH CollegeScheduler API",
   "main": "./src/index.js",
@@ -11,7 +11,7 @@
     "uhcs_puppet": "./src/puppet.js"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "dotenv": "^8.0.0",
     "express": "^4.17.1",

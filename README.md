@@ -1,4 +1,4 @@
-uhcollegescheduler-proxy
+@cougargrades/collegescheduler
 ========================
 📅📡 Local reverse-proxy to UH CollegeScheduler API that can be re-authenticated automatically to consistently access up-to-date course schedules and catalog data.
 

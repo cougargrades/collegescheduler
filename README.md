@@ -33,7 +33,7 @@ This project is not on Docker Hub. To build from Github directly, follow these i
     
     OR
 
-    `docker build . -t uhcollegescheduler-proxy:dev`
+    `docker build . -t collegescheduler:dev`
 - Create an `.env` file that is a copy of [`.env.example`](.env.example) with your own information.
 
     ```
@@ -43,7 +43,7 @@ This project is not on Docker Hub. To build from Github directly, follow these i
     ```
 - Start a new container: 
 
-    `docker run -i --env-file .env -p 3003:3003 uhcollegescheduler-proxy`
+    `docker run -i --env-file .env -p 3003:3003 collegescheduler:dev`
 
 #### Run as standalone
 - _Prerequisite: Make sure Puppet.js functions as intended and has no errors before starting the proxy server. See guide below._
@@ -65,7 +65,7 @@ puppet.js uses [`puppeteer`](https://github.com/GoogleChrome/puppeteer/) to craw
 
 ### Usage
 
-_Note: Some environments will require [troubleshooting with puppeteer](https://github.com/GoogleChrome/puppeteer/blob/master/docs/troubleshooting.md)._
+_Note: Some environments will require [troubleshooting with puppeteer](https://github.com/GoogleChrome/puppeteer/blob/master/docs/troubleshooting.md). This project was designed with `google-chrome-unstable=77.0.3833.0-1` in mind. Future releases may require updating the npm module `puppeteer-core`._
 
 #### Command-line tool
 - With npm:

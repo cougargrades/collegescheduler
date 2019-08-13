@@ -58,7 +58,8 @@ class ProxyServer {
             this.fetchOpt = {
                 headers: {
                     cookie: this.cookie
-                }
+                },
+                redirect: 'manual'
             };
             let end = process.hrtime(start)
             if(this.logging > 1) console.log(`${stamp()} ProxyServer#refresh() -> END (${end[0]}s ${end[1] / 1000000}ms)`)
@@ -85,6 +86,8 @@ class ProxyServer {
         depth = depth ? depth : 0
         if(this.logging > 1) console.log(`${stamp()} ProxyServer#keepalive() -> START (depth: ${depth})`)
         let res = await fetch(`${HOST}/api/terms/`, this.fetchOpt)
+        console.log(`${stamp()} ${res.status} ${res.statusText}, redirected? ${res.redirected} \n    ${res.url}`)
+        for(let p of res.headers.entries()) console.log(`    ${p[0]}: ${p[1]}`)
 
         // If response doesn't go through, try at most 3 times again
         if(res.status !== 200 && depth < 3) {

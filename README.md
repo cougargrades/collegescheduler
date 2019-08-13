@@ -23,6 +23,17 @@ _Note: Do not leave the local server exposed to the open internet because every 
 #### Run inside Docker
 This project is not on Docker Hub. To build from Github directly, follow these instructions.
 
+- Clone the github repo:
+
+    `git clone git@github.com:cougargrades/collegescheduler.git`
+- `cd collegescheduler`
+- Build the docker image locally
+
+    `make build`
+    
+    OR
+
+    `docker build . -t uhcollegescheduler-proxy:dev`
 - Create an `.env` file that is a copy of [`.env.example`](.env.example) with your own information.
 
     ```
@@ -30,9 +41,6 @@ This project is not on Docker Hub. To build from Github directly, follow these i
     MY_UH_PASSWORD=hunter2
     PROXY_SERVER_PORT=3003
     ```
-- Go to the [Releases tab](https://github.com/au5ton/uhcollegescheduler-proxy/releases), pick the latest release, and replace the occurrences of `<TAG>` in the command below with the tag of the latest release (Ex: _v1.1_):
-
-    `docker build github.com/au5ton/uhcollegescheduler-proxy#<TAG> -t uhcollegescheduler-proxy:<TAG>`
 - Start a new container: 
 
     `docker run -i --env-file .env -p 3003:3003 uhcollegescheduler-proxy`
@@ -61,11 +69,11 @@ _Note: Some environments will require [troubleshooting with puppeteer](https://g
 
 #### Command-line tool
 - With npm:
-    - Install tool: `npm install -g au5ton/uhcollegescheduler-proxy`
+    - Install tool: `npm install -g cougargrades/collegescheduler`
     - Run tool: `npx uhcs_puppet --help`
 - Cloning directly:
-    - `git clone https://github.com/au5ton/uhcollegescheduler-proxy.git`
-    - `cd uhcollegescheduler-proxy/`
+    - `git clone https://github.com/cougargrades/collegescheduler.git`
+    - `cd collegescheduler/`
     - Install dependencies: `npm install`
     - Run tool: `./src/puppet.js --help`
 - Copy example file: `cp .env.example .env`
@@ -107,11 +115,11 @@ _Note: Some environments will require [troubleshooting with puppeteer](https://g
 
 #### Node module
 - Developed with Node 10. Must support ES7 `async/await` and maybe other features.
-- Install dependency: `npm install au5ton/uhcollegescheduler-proxy`
+- Install dependency: `npm install cougargrades/collegescheduler`
 - Sample code:
 
     ```javascript
-    const { Puppet } = require('uhcollegescheduler-proxy')
+    const { Puppet } = require('@cougargrades/collegescheduler')
 
     let options = {
         logging: true, // [true | false]

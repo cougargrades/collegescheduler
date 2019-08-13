@@ -6,7 +6,7 @@
 
 It can even be run entirely in Docker.
 
-**Partial insight into the CollegeScheduler API and its endpoints has been written by au5ton over at: [@au5ton/docs](https://github.com/au5ton/docs/wiki/CollegeScheduler-(*.collegescheduler.com-))**
+**Partial insight into the CollegeScheduler API and its endpoints has been written by au5ton over at: [@au5ton/docs](https://github.com/au5ton/docs/wiki/CollegeScheduler-(*.collegescheduler.com))**
 
 <hr>
 

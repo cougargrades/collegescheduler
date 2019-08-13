@@ -19,7 +19,7 @@ class ProxyServer {
      * @param {options} params - { port: <number>, psid: <string>, password: <string>, logging: <number> }
      */
     constructor(params) {
-        this.name = 'uhcollegescheduler-proxy'
+        this.name = '@cougargrades/collegescheduler'
         this.port = params.port
         // Init credentials
         this.psid = params.psid.slice()

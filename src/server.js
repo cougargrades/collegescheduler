@@ -130,6 +130,7 @@ class ProxyServer {
             }
         }
         
+        app.get('/', (req, res) => res.json(['/api/*', '/meta']))
         app.use('/api/*', proxy)
         app.get('/meta', (req, res) => res.json(`Hello, ${this.name}!`))
         

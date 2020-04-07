@@ -7,9 +7,8 @@ const isDocker = require('is-docker')
 const { execSync } = require('child_process')
 const nodeFetch = require('node-fetch')
 
-const puppeteer = isDocker() ? require('puppeteer-core') : require('puppeteer')
-
-const CHROME_INSTALL = execSync('which google-chrome-unstable').toString().trim()
+const puppeteer = require('puppeteer')
+const CONFIG = require('../config.json') || {};
 
 if(!process.env.MY_UH_PEOPLESOFT_ID)
     console.log('[⛔] Must define MY_UH_PEOPLESOFT_ID in environment or .env file')
@@ -47,6 +46,7 @@ module.exports.cli = async function () {
             console.log(`[🍪] CookieJar written to ${argv.outfile}`)
         }
         else {
+            console.log(`[🍪] CookieJar printing`)
             console.log(data)
         }
     }
@@ -70,13 +70,15 @@ module.exports.extract  = async function (psid, password, options) {
     options.format = options.format !== 'set-cookie' ? 'jar' : 'set-cookie';
 
     // Puppeteer setup
-    const browser = await puppeteer.launch({ executablePath: isDocker() ? CHROME_INSTALL : undefined, args: isDocker() ? ['--no-sandbox', '--disable-setuid-sandbox'] : [] })
+    //const browser = await puppeteer.launch(isDocker() ? {executablePath: 'google-chrome-unstable', ...CONFIG.puppeteer} : CONFIG.puppeteer)
+    const browser = await puppeteer.launch(isDocker() ? {executablePath: 'google-chrome-unstable', ...CONFIG.puppeteer} : CONFIG.puppeteer)
+    
     const page = await browser.newPage();
 
-    if(options.logging) console.log(`[🐋] Detected to be running inside Docker. \n\tChrome sandbox disabled.\n\tUsing Chrome installation: ${execSync('which google-chrome-unstable')}`)
+    if(options.logging) console.log(`[🐋] Detected to be running inside Docker. \n\tUsing Chrome installation: ${execSync('which google-chrome-unstable')}`)
 
-    if(options.logging) console.log('[💬] Login https://my.uh.edu ...')
-    await page.goto('https://my.uh.edu');
+    if(options.logging) console.log('[💬] Login https://saprd.my.uh.edu/ ...')
+    await page.goto('https://saprd.my.uh.edu/');
 
     // Select "UH Central"
     await page.waitFor('label[for=myuh]')

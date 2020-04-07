@@ -1,14 +1,11 @@
 {
   "name": "@cougargrades/collegescheduler",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Local reverse-proxy to UH CollegeScheduler API",
   "main": "./src/index.js",
   "scripts": {
     "server": "./src/server.js",
     "puppet": "./src/puppet.js"
-  },
-  "bin": {
-    "uhcs_puppet": "./src/puppet.js"
   },
   "author": "",
   "license": "MIT",
@@ -20,7 +17,6 @@
     "is-docker": "^2.0.0",
     "node-fetch": "^2.6.0",
     "puppeteer": "1.18.x",
-    "puppeteer-core": "1.18.x",
     "tough-cookie": "^3.0.1",
     "yargs": "^13.2.4"
   }
